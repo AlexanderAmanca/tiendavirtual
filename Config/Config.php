@@ -1,6 +1,6 @@
 <?php 
 	//define BASE_URL
-	const BASE_URL = "http://localhost/tiendaVirtual-main";
+	const BASE_URL = "http://localhost/TiendaVirtual-main";
 
 	//Zona horaria
 	date_default_timezone_set('America/Guatemala');
@@ -18,13 +18,13 @@
 	const SPM = ",";
 
 	//Simbolo de moneda
-	const SMONEY = "S";
+	const SMONEY = "S/";
 
 	//Datos envio de correo
 	const NOMBRE_REMITENTE = "Tienda Virtual";
-	const EMAIL_REMITENTE = "no-reply@abelosh.com";
+	const EMAIL_REMITENTE = "no-reply@zapateriajeppeto.com";
 	const NOMBRE_EMPESA = "Tienda Virtual";
-	const WEB_EMPRESA = "www.abelosh.com";
+	const WEB_EMPRESA = "www.zapateriajeppeto.com";
 
 
  ?>
