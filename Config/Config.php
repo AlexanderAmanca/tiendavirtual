@@ -1,6 +1,6 @@
 <?php 
 	//define BASE_URL
-	const BASE_URL = "http://localhost/TiendaVirtual-main";
+	const BASE_URL = "http://localhost/tiendavirtual";
 
 	//Zona horaria
 	date_default_timezone_set('America/Guatemala');
