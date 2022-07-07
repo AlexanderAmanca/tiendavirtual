@@ -6,10 +6,10 @@
 		public function __construct()
 		{
 			parent::__construct();
-			$this->objCategoria = new CategoriasModel();
+			//$this->objCategoria = new CategoriasModel();
 		}	
 		public function getCategoriasT(){
-			return $this->objCategoria->selectCategorias();
+			//return $this->objCategoria->selectCategorias();
 
 		}
 	}
