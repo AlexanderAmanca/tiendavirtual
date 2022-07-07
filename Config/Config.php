@@ -27,9 +27,7 @@
 	const WEB_EMPRESA = "www.abelosh.com";
 	
 
-
-
-	
-
+	const CAT_SLIDER ="1,2,3";
+	const CAT_BANNER ="4,5,6";
 
  ?>
