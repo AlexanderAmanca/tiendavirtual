@@ -1,270 +1,226 @@
-$(".js-select2").each(function(){
-	$(this).select2({
-		minimumResultsForSearch: 20,
-		dropdownParent: $(this).next('.dropDownSelect2')
-	});
-});
+let tableClientes; 
+let rowTable = "";
+let divLoading = document.querySelector("#divLoading");
+document.addEventListener('DOMContentLoaded', function(){
 
-$('.parallax100').parallax100();
-
-$('.gallery-lb').each(function() { // the containers for all your galleries
-	$(this).magnificPopup({
-        delegate: 'a', // the selector for gallery item
-        type: 'image',
-        gallery: {
-        	enabled:true
+    tableClientes = $('#tableClientes').dataTable( {
+        "aProcessing":true,
+        "aServerSide":true,
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
         },
-        mainClass: 'mfp-fade'
+        "ajax":{
+            "url": " "+base_url+"/Clientes/getClientes",
+            "dataSrc":""
+        },
+        "columns":[
+            {"data":"idpersona"},
+            {"data":"identificacion"},
+            {"data":"nombres"},
+            {"data":"apellidos"},
+            {"data":"email_user"},
+            {"data":"telefono"},
+            {"data":"options"}
+        ],
+        'dom': 'lBfrtip',
+        'buttons': [
+            {
+                "extend": "copyHtml5",
+                "text": "<i class='far fa-copy'></i> Copiar",
+                "titleAttr":"Copiar",
+                "className": "btn btn-secondary"
+            },{
+                "extend": "excelHtml5",
+                "text": "<i class='fas fa-file-excel'></i> Excel",
+                "titleAttr":"Esportar a Excel",
+                "className": "btn btn-success"
+            },{
+                "extend": "pdfHtml5",
+                "text": "<i class='fas fa-file-pdf'></i> PDF",
+                "titleAttr":"Esportar a PDF",
+                "className": "btn btn-danger"
+            },{
+                "extend": "csvHtml5",
+                "text": "<i class='fas fa-file-csv'></i> CSV",
+                "titleAttr":"Esportar a CSV",
+                "className": "btn btn-info"
+            }
+        ],
+        "resonsieve":"true",
+        "bDestroy": true,
+        "iDisplayLength": 10,
+        "order":[[0,"desc"]]  
     });
-});
 
-$('.js-addwish-b2').on('click', function(e){
-	e.preventDefault();
-});
+	if(document.querySelector("#formCliente")){
+        let formCliente = document.querySelector("#formCliente");
+        formCliente.onsubmit = function(e) {
+            e.preventDefault();
+            let strIdentificacion = document.querySelector('#txtIdentificacion').value;
+            let strNombre = document.querySelector('#txtNombre').value;
+            let strApellido = document.querySelector('#txtApellido').value;
+            let strEmail = document.querySelector('#txtEmail').value;
+            let intTelefono = document.querySelector('#txtTelefono').value;
+            let strNit = document.querySelector('#txtNit').value;
+            let strNomFical = document.querySelector('#txtNombreFiscal').value;
+            let strDirFiscal = document.querySelector('#txtDirFiscal').value;
+            let strPassword = document.querySelector('#txtPassword').value;
 
-$('.js-addwish-b2').each(function(){
-	var nameProduct = $(this).parent().parent().find('.js-name-b2').html();
-	$(this).on('click', function(){
-		swal(nameProduct, "is added to wishlist !", "success");
+            if(strIdentificacion == '' || strApellido == '' || strNombre == '' || strEmail == '' || intTelefono == '' || strNit == '' || strDirFiscal == '' || strNomFical=='' )
+            {
+                swal("Atención", "Todos los campos son obligatorios." , "error");
+                return false;
+            }
 
-		$(this).addClass('js-addedwish-b2');
-		$(this).off('click');
-	});
-});
-
-$('.js-addwish-detail').each(function(){
-	var nameProduct = $(this).parent().parent().parent().find('.js-name-detail').html();
-
-	$(this).on('click', function(){
-		swal(nameProduct, "is added to wishlist !", "success");
-
-		$(this).addClass('js-addedwish-detail');
-		$(this).off('click');
-	});
-});
-
-/*---------------------------------------------*/
-
-$('.js-addcart-detail').each(function(){
-	var nameProduct = $(this).parent().parent().parent().parent().find('.js-name-detail').html();
-	$(this).on('click', function(){
-		let id = this.getAttribute('id');
-		let cant = document.querySelector('#cant-product').value;
-
-		if(isNaN(cant) || cant < 1){
-			swal("","La cantidad debe ser mayor o igual que 1" , "error");
-			return;
-		} 
-		let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-	    let ajaxUrl = base_url+'/Tienda/addCarrito'; 
-	    let formData = new FormData();
-	    formData.append('id',id);
-	    formData.append('cant',cant);
-	    request.open("POST",ajaxUrl,true);
-	    request.send(formData);
-	    request.onreadystatechange = function(){
-	        if(request.readyState != 4) return;
-	        if(request.status == 200){
-	        	let objData = JSON.parse(request.responseText);
-	        	if(objData.status){
-		            document.querySelector("#productosCarrito").innerHTML = objData.htmlCarrito;
-		            //document.querySelectorAll(".cantCarrito")[0].setAttribute("data-notify",objData.cantCarrito);
-		            //document.querySelectorAll(".cantCarrito")[1].setAttribute("data-notify",objData.cantCarrito);
-		            const cants = document.querySelectorAll(".cantCarrito");
-					cants.forEach(element => {
-						element.setAttribute("data-notify",objData.cantCarrito)
-					});
-					swal(nameProduct, "¡Se agrego al corrito!", "success");
-	        	}else{
-	        		swal("", objData.msg , "error");
-	        	}
-	        } 
-	        return false;
-	    }
-	});
-});
-
-$('.js-pscroll').each(function(){
-	$(this).css('position','relative');
-	$(this).css('overflow','hidden');
-	var ps = new PerfectScrollbar(this, {
-		wheelSpeed: 1,
-		scrollingThreshold: 1000,
-		wheelPropagation: false,
-	});
-
-	$(window).on('resize', function(){
-		ps.update();
-	})
-});
-
-
-/*==================================================================
-[ +/- num product ]*/
-$('.btn-num-product-down').on('click', function(){
-    let numProduct = Number($(this).next().val());
-    let idpr = this.getAttribute('idpr');
-    if(numProduct > 1) $(this).next().val(numProduct - 1);
-    let cant = $(this).next().val();
-    if(idpr != null){
-    	fntUpdateCant(idpr,cant);
+            let elementsValid = document.getElementsByClassName("valid");
+            for (let i = 0; i < elementsValid.length; i++) { 
+                if(elementsValid[i].classList.contains('is-invalid')) { 
+                    swal("Atención", "Por favor verifique los campos en rojo." , "error");
+                    return false;
+                } 
+            } 
+            divLoading.style.display = "flex";
+            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+            let ajaxUrl = base_url+'/Clientes/setCliente'; 
+            let formData = new FormData(formCliente);
+            request.open("POST",ajaxUrl,true);
+            request.send(formData);
+            request.onreadystatechange = function(){
+                if(request.readyState == 4 && request.status == 200){
+                    let objData = JSON.parse(request.responseText);
+                    if(objData.status)
+                    {
+                        if(rowTable == ""){
+                            tableClientes.api().ajax.reload();
+                        }else{
+                           rowTable.cells[1].textContent =  strIdentificacion;
+                           rowTable.cells[2].textContent =  strNombre;
+                           rowTable.cells[3].textContent =  strApellido;
+                           rowTable.cells[4].textContent =  strEmail;
+                           rowTable.cells[5].textContent =  intTelefono;
+                           rowTable = "";
+                        }
+                        $('#modalFormCliente').modal("hide");
+                        formCliente.reset();
+                        swal("Usuarios", objData.msg ,"success");
+                    }else{
+                        swal("Error", objData.msg , "error");
+                    }
+                }
+                divLoading.style.display = "none";
+                return false;
+            }
+        }
     }
-});
 
-$('.btn-num-product-up').on('click', function(){
-    let numProduct = Number($(this).prev().val());
-    let idpr = this.getAttribute('idpr');
-    $(this).prev().val(numProduct + 1);
-    let cant = $(this).prev().val();
-    if(idpr != null){
-    	fntUpdateCant(idpr,cant);
+
+}, false);
+
+
+function fntViewInfo(idpersona){
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url+'/Clientes/getCliente/'+idpersona;
+    request.open("GET",ajaxUrl,true);
+    request.send();
+    request.onreadystatechange = function(){
+        if(request.readyState == 4 && request.status == 200){
+            let objData = JSON.parse(request.responseText);
+            if(objData.status)
+            {
+                document.querySelector("#celIdentificacion").innerHTML = objData.data.identificacion;
+                document.querySelector("#celNombre").innerHTML = objData.data.nombres;
+                document.querySelector("#celApellido").innerHTML = objData.data.apellidos;
+                document.querySelector("#celTelefono").innerHTML = objData.data.telefono;
+                document.querySelector("#celEmail").innerHTML = objData.data.email_user;
+                document.querySelector("#celIde").innerHTML = objData.data.nit;
+                document.querySelector("#celNomFiscal").innerHTML = objData.data.nombrefiscal;
+                document.querySelector("#celDirFiscal").innerHTML = objData.data.direccionfiscal;
+                document.querySelector("#celFechaRegistro").innerHTML = objData.data.fechaRegistro; 
+                $('#modalViewCliente').modal('show');
+            }else{
+                swal("Error", objData.msg , "error");
+            }
+        }
     }
-});
-
-//Actualizar producto
-if(document.querySelector(".num-product")){
-	let inputCant = document.querySelectorAll(".num-product");
-	inputCant.forEach(function(inputCant) {
-		inputCant.addEventListener('keyup', function(){
-			let idpr = this.getAttribute('idpr');
-			let cant = this.value;
-			if(idpr != null){
-		    	fntUpdateCant(idpr,cant);
-		    }
-		});
-	});
 }
 
-if(document.querySelector("#formRegister")){
-    let formRegister = document.querySelector("#formRegister");
-    formRegister.onsubmit = function(e) {
-        e.preventDefault();
-        let strNombre = document.querySelector('#txtNombre').value;
-        let strApellido = document.querySelector('#txtApellido').value;
-        let strEmail = document.querySelector('#txtEmailCliente').value;
-        let intTelefono = document.querySelector('#txtTelefono').value;
+function fntEditInfo(element, idpersona){
+    rowTable = element.parentNode.parentNode.parentNode;
+    document.querySelector('#titleModal').innerHTML ="Actualizar Cliente";
+    document.querySelector('.modal-header').classList.replace("headerRegister", "headerUpdate");
+    document.querySelector('#btnActionForm').classList.replace("btn-primary", "btn-info");
+    document.querySelector('#btnText').innerHTML ="Actualizar";
+    let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    let ajaxUrl = base_url+'/Clientes/getCliente/'+idpersona;
+    request.open("GET",ajaxUrl,true);
+    request.send();
+    request.onreadystatechange = function(){
 
-        if(strApellido == '' || strNombre == '' || strEmail == '' || intTelefono == '' )
-        {
-            swal("Atención", "Todos los campos son obligatorios." , "error");
-            return false;
+        if(request.readyState == 4 && request.status == 200){
+            let objData = JSON.parse(request.responseText);
+            if(objData.status)
+            {
+                document.querySelector("#idUsuario").value = objData.data.idpersona;
+                document.querySelector("#txtIdentificacion").value = objData.data.identificacion;
+                document.querySelector("#txtNombre").value = objData.data.nombres;
+                document.querySelector("#txtApellido").value = objData.data.apellidos;
+                document.querySelector("#txtTelefono").value = objData.data.telefono;
+                document.querySelector("#txtEmail").value = objData.data.email_user;
+                document.querySelector("#txtNit").value =objData.data.nit;
+                document.querySelector("#txtNombreFiscal").value =objData.data.nombrefiscal;
+                document.querySelector("#txtDirFiscal").value =objData.data.direccionfiscal;
+            }
         }
+        $('#modalFormCliente').modal('show');
+    }
+}
 
-        let elementsValid = document.getElementsByClassName("valid");
-        for (let i = 0; i < elementsValid.length; i++) { 
-            if(elementsValid[i].classList.contains('is-invalid')) { 
-                swal("Atención", "Por favor verifique los campos en rojo." , "error");
-                return false;
-            } 
-        } 
-        divLoading.style.display = "flex";
-        let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-        let ajaxUrl = base_url+'/Tienda/registro'; 
-        let formData = new FormData(formRegister);
-        request.open("POST",ajaxUrl,true);
-        request.send(formData);
-        request.onreadystatechange = function(){
-            if(request.readyState == 4 && request.status == 200){
-                let objData = JSON.parse(request.responseText);
-                if(objData.status)
-                {
-                    window.location.reload(false);
-                }else{
-                    swal("Error", objData.msg , "error");
+function fntDelInfo(idpersona){
+    swal({
+        title: "Eliminar Cliente",
+        text: "¿Realmente quiere eliminar al cliente?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Si, eliminar!",
+        cancelButtonText: "No, cancelar!",
+        closeOnConfirm: false,
+        closeOnCancel: true
+    }, function(isConfirm) {
+        
+        if (isConfirm) 
+        {
+            let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+            let ajaxUrl = base_url+'/Clientes/delCliente';
+            let strData = "idUsuario="+idpersona;
+            request.open("POST",ajaxUrl,true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.send(strData);
+            request.onreadystatechange = function(){
+                if(request.readyState == 4 && request.status == 200){
+                    let objData = JSON.parse(request.responseText);
+                    if(objData.status)
+                    {
+                        swal("Eliminar!", objData.msg , "success");
+                        tableClientes.api().ajax.reload();
+                    }else{
+                        swal("Atención!", objData.msg , "error");
+                    }
                 }
             }
-            divLoading.style.display = "none";
-            return false;
         }
-    }
-}
 
-if(document.querySelector(".methodpago")){
-
-	let optmetodo = document.querySelectorAll(".methodpago");
-    optmetodo.forEach(function(optmetodo) {
-        optmetodo.addEventListener('click', function(){
-        	if(this.value == "Paypal"){
-        		document.querySelector("#msgpaypal").classList.remove("notblock");
-        		document.querySelector("#divtipopago").classList.add("notblock");
-        	}else{
-        		document.querySelector("#msgpaypal").classList.add("notblock");
-        		document.querySelector("#divtipopago").classList.remove("notblock");
-        	}
-        });
     });
+
 }
 
-function fntdelItem(element){
-	//Option 1 = Modal
-	//Option 2 = Vista Carrito
-	let option = element.getAttribute("op");
-	let idpr = element.getAttribute("idpr");
-	if(option == 1 || option == 2 ){
-
-		let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-	    let ajaxUrl = base_url+'/Tienda/delCarrito'; 
-	    let formData = new FormData();
-	    formData.append('id',idpr);
-	    formData.append('option',option);
-	    request.open("POST",ajaxUrl,true);
-	    request.send(formData);
-	    request.onreadystatechange = function(){
-	        if(request.readyState != 4) return;
-	        if(request.status == 200){
-	        	let objData = JSON.parse(request.responseText);
-	        	if(objData.status){
-	        		if(option == 1){
-			            document.querySelector("#productosCarrito").innerHTML = objData.htmlCarrito;
-			            const cants = document.querySelectorAll(".cantCarrito");
-						cants.forEach(element => {
-							element.setAttribute("data-notify",objData.cantCarrito)
-						});
-	        		}else{
-	        			element.parentNode.parentNode.remove();
-	        			document.querySelector("#subTotalCompra").innerHTML = objData.subTotal;
-	        			document.querySelector("#totalCompra").innerHTML = objData.total;
-	        			if(document.querySelectorAll("#tblCarrito tr").length == 1){
-	            			window.location.href = base_url;
-	            		}
-	        		}
-	        	}else{
-	        		swal("", objData.msg , "error");
-	        	}
-	        } 
-	        return false;
-	    }
-
-	}
-}
-
-function fntUpdateCant(pro,cant){
-	if(cant <= 0){
-		document.querySelector("#btnComprar").classList.add("notblock");
-	}else{
-		document.querySelector("#btnComprar").classList.remove("notblock");
-		let request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-	    let ajaxUrl = base_url+'/Tienda/updCarrito'; 
-	    let formData = new FormData();
-	    formData.append('id',pro);    
-	   	formData.append('cantidad',cant);
-	   	request.open("POST",ajaxUrl,true);
-	    request.send(formData);
-	    request.onreadystatechange = function(){
-	    	if(request.readyState != 4) return;
-	    	if(request.status == 200){
-	    		let objData = JSON.parse(request.responseText);
-	    		if(objData.status){
-	    			let colSubtotal = document.getElementsByClassName(pro)[0];
-	    			colSubtotal.cells[4].textContent = objData.totalProducto;
-	    			document.querySelector("#subTotalCompra").innerHTML = objData.subTotal;
-	    			document.querySelector("#totalCompra").innerHTML = objData.total;
-	    		}else{
-	    			swal("", objData.msg , "error");
-	    		}
-	    	}
-
-	    }
-	}
-	return false;
+function openModal()
+{
+    rowTable = "";
+    document.querySelector('#idUsuario').value ="";
+    document.querySelector('.modal-header').classList.replace("headerUpdate", "headerRegister");
+    document.querySelector('#btnActionForm').classList.replace("btn-info", "btn-primary");
+    document.querySelector('#btnText').innerHTML ="Guardar";
+    document.querySelector('#titleModal').innerHTML = "Nuevo Cliente";
+    document.querySelector("#formCliente").reset();
+    $('#modalFormCliente').modal('show');
 }
