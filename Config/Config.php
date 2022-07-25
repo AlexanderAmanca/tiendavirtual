@@ -18,7 +18,14 @@
 	const SPM = ",";
 
 	//Simbolo de moneda
-	const SMONEY = "Q";
+	const SMONEY = "$";
+	const CURRENCY = "USD";
+	
+	//Api Paypal
+	//SANDBOX PAYPAL, para pruebas
+	const IDCLIENTE = "AcVuJAPahRyXMsTYfxzuXRx-imXc-8TouryLLFfCZlmLZEBw_Zmf20E1vhvmbi_8eYDVQM0AWNTZHScr";
+	//LIVE PAYPAL, para produccion
+	//const IDCLIENTE = "ASDmPfk-3EkuWnHACkFIwmm12dbWoDOGKQmWWcCOAuyUvToMnFH9o70I5pMffroxAsbSvHaebAl0sTZd";
 
 	//Datos envio de correo
 	const NOMBRE_REMITENTE = "Tienda Virtual";

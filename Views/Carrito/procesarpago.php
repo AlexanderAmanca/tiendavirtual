@@ -9,7 +9,63 @@ foreach ($_SESSION['arrCarrito'] as $producto) {
 $total = $subtotal + COSTOENVIO;
 
 ?>
- <br><br><br>
+<script 
+      src="https://www.paypal.com/sdk/js?client-id=<?= IDCLIENTE ?>&currency=<?= CURRENCY ?>"> 
+</script>
+<script>
+      paypal.Buttons().render('#paypal-btn-container');
+</script>
+
+<script>
+      paypal.Buttons({
+        // Sets up the transaction when a payment button is clicked
+        createOrder: function(data, actions)  {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: <?= $total; ?> // Can also reference a variable or function
+              },
+			  description: "Compra de articulos en <?= NOMBRE_EMPESA?> por  <?= SMONEY.$total ?>",
+			
+            }]
+          });
+        }, 
+		onApprove: function(data, actions)  {
+          return actions.order.capture().then(function(details) {
+            Let base_url = "<?= base_url(); ?>";
+			Let dir = document.querySelector("#txtDireccion").value;
+			Let ciudad = document.querySelector("#txtCiudad").value;
+			Let inttipodepago = 1;
+			Let request = (window.XMLHttpRequest) ?
+			            new XMLHttpRequest():
+						new ActiveXObject('Microsoft.XMLHTTP');
+			Let ajaxUrl = base_url+'/Tienda/procesarVenta';
+			Let formData = new FormData();
+			Let formData.append('direccion',dir);
+			Let formData.append('ciudad',ciudad);
+			Let formData.append('inttipodepago',inttipopago);
+			Let formData.append('datapay',JSON.stringify(details));
+
+			request.open("POST",ajaxUrl,true);
+			request.send(formData);
+			request.onreadystatechange = function(){
+				if(request.readyState != 4) return;
+				if(request.status ==200){
+				Let objData = JSON.parse(request.responseText);
+				if(objData.status){
+					window.location = base_url+"/tienda/confirmarpedido";
+				}else{
+					swal("", objData.msg , "error");
+				}
+			}
+		}
+
+          });
+        }
+      }).render('#paypal-btn-container');
+    </script>
+
+<br><br><br>
 <hr>
 	<!-- breadcrumb -->
 	<div class="container">
@@ -147,10 +203,11 @@ $total = $subtotal + COSTOENVIO;
 <?php 
 	if(isset($_SESSION['login'])){
 ?>
-					<h4 class="mtext-109 cl2 p-b-30">
+                    <div id="divMetodoPago" class="notblock">
+					    <h4 class="mtext-109 cl2 p-b-30">
 						Método de pago
-					</h4>
-					<div class="divmetodpago">
+					    </h4>
+					    <div class="divmetodpago">
 						<div>
 							<label for="paypal">
 								<input type="radio" id="paypal" class="methodpago" name="payment-method" checked="" value="Paypal">
@@ -180,15 +237,22 @@ $total = $subtotal + COSTOENVIO;
 								</select>
 								<div class="dropDownSelect2"></div>
 							</div>
+							<br>
+							<button type="submit" id="btnComprar" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">Procesar pedido</button>
 						</div>
-						<div id="msgpaypal">
-							<p>Para completar la transacción, te enviaremos a los servidores seguros de PayPal.</p>
-						</div>
+						<div id="divpaypal">
+						    <div >
+							     <p>Para completar la transacción, te enviaremos a los servidores seguros de PayPal.</p>
+						    </div>
+							<br>
+						    <div id="paypal-btn-container"></div>
+
+					     </div>
+				    </div>
 					</div>
-					<hr>
-					<br>
+
 					
-					<button type="submit" id="btnComprar" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">Pagar</button>
+					
 <?php } ?>
 				</div>
 			</div>
