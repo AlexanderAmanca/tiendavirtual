@@ -1,23 +1,23 @@
 <?php 
-
+	require_once("Models/TCategoria.php");
+	require_once("Models/TProducto.php");
 	class Home extends Controllers{
-		use TCategoria,TProducto;
+		use TCategoria, TProducto;
 		public function __construct()
 		{
 			parent::__construct();
+			session_start();
 		}
 
 		public function home()
 		{
-			dep($this->model->getCategorias(CAT_SLIDER));
-			exit;
-			$data['page_tag'] = "Home";
-			$data['page_title'] = "Página principal";
+			$data['page_tag'] = NOMBRE_EMPESA;
+			$data['page_title'] = NOMBRE_EMPESA;
 			$data['page_name'] = "tienda_virtual";
 			$data['slider'] = $this->getCategoriasT(CAT_SLIDER);
 			$data['banner'] = $this->getCategoriasT(CAT_BANNER);
 			$data['productos'] = $this->getProductosT();
-			$this->views->getView($this,"home",$data);
+			$this->views->getView($this,"home",$data); 
 		}
 
 	}
