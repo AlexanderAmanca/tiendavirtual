@@ -361,5 +361,22 @@
 			die();
 		}
 
+		public function confirmarpedido(){
+			if(empty($_SESSION['dataorden'])){
+				header("Location: ".base_url());
+			}else{
+				$dataorden = $_SESSION['dataorden'];
+				$idpedido = openssl_decrypt($dataorden['orden'], METHODENCRIPT, KEY);
+				$transaccion = openssl_decrypt($dataorden['transaccion'], METHODENCRIPT, KEY);
+				$data['page_tag'] = "Confirmar Pedido";
+				$data['page_title'] = "Confirmar Pedido";
+				$data['page_name'] = "confirmarpedido";
+				$data['orden'] = $idpedido;
+				$data['transaccion'] = $transaccion;
+				$this->views->getView($this,"confirmarpedido",$data);
+			}
+			unset($_SESSION['dataorden']);
+		}
+
 	}
  ?>
