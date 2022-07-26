@@ -44,6 +44,24 @@ trait TCliente{
         return $return;
 	}
 
+	public function insertPedido(string $idtransaccionpaypal = NULL, string $datospaypal = NULL, int $personaid, float $costo_envio, string $monto, int $tipopagoid, string $direccionenvio, string $status){
+		$this->con = new Mysql();
+		$query_insert  = "INSERT INTO pedido(idtransaccionpaypal,datospaypal,personaid,costo_envio,monto,tipopagoid,direccion_envio,status) 
+							  VALUES(?,?,?,?,?,?,?,?)";
+		$arrData = array($idtransaccionpaypal,
+    						$datospaypal,
+    						$personaid,
+    						$costo_envio,
+    						$monto,
+    						$tipopagoid,
+    						$direccionenvio,
+    						$status
+    					);
+		$request_insert = $this->con->insert($query_insert,$arrData);
+	    $return = $request_insert;
+	    return $return;
+	}
+
 	public function insertDetalleTemp(array $pedido){
 		$this->intIdUsuario = $pedido['idcliente'];
 		$this->intIdTransaccion = $pedido['idtransaccion'];
